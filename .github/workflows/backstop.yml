@@ -24,6 +24,9 @@ jobs:
       - name: Install Puppeteer
         run: npm install puppeteer
 
+      - name: Give execute permission to backstop binary
+        run: chmod +x node_modules/.bin/backstop
+
       - name: Run BackstopJS reference
         run: npx backstop reference --config=backstop.config.js
 
