@@ -34,9 +34,9 @@ jobs:
     - name: Package reference screenshots
       run: tar -czf reference-screenshots.tar.gz backstop_data/bitmaps_reference
 
-    # Use actions/upload-artifact@v3 to upload the screenshots
+    # Upload reference screenshots as artifact using v2
     - name: Upload reference screenshots as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: reference-screenshots
         path: reference-screenshots.tar.gz
