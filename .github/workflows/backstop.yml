@@ -28,7 +28,7 @@ jobs:
       run: npx backstop reference --config=backstop.config.js
 
     - name: Upload reference screenshots as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@latest
       with:
         name: reference-screenshots
         path: backstop_data/bitmaps_reference
