@@ -22,7 +22,8 @@ jobs:
       run: npm install
 
     - name: Install Puppeteer browsers
-      run: npx puppeteer install
+      run: |
+        npm install puppeteer
 
     - name: Give execute permission to backstop binary
       run: chmod +x node_modules/.bin/backstop
