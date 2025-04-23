@@ -21,6 +21,9 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Install Puppeteer browsers
+      run: npx puppeteer install
+
     - name: Give execute permission to backstop binary
       run: chmod +x node_modules/.bin/backstop
 
@@ -36,4 +39,4 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/json" \
           --data '{"message":"Upload reference screenshots","branch":"gh-pages","content":"'$(base64 reference-screenshots.tar.gz)'"' \
-          https://api.github.com/repos/LinkGraph2021/BSJS/contents/backstop_data/bitmaps_reference/$(date +%Y%m%d%H
+          https://api.github.com/repos/LinkGraph2021/BSJS/contents/backstop_data/bitmaps_reference/$(date +%Y%m%d%H)
