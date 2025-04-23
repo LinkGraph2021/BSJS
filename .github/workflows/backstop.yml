@@ -27,14 +27,13 @@ jobs:
     - name: Run BackstopJS reference
       run: npx backstop reference --config=backstop.config.js
 
-    - name: Upload reference screenshots as artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: reference-screenshots
-        path: backstop_data/bitmaps_reference
+    - name: Package reference screenshots
+      run: tar -czf reference-screenshots.tar.gz backstop_data/bitmaps_reference
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        publish_dir: backstop_data/html_report
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload reference screenshots to GitHub
+      run: |
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          --data '{"message":"Upload reference screenshots","branch":"gh-pages","content":"'$(base64 reference-screenshots.tar.gz)'"' \
+          https://api.github.com/repos/LinkGraph2021/BSJS/contents/backstop_data/bitmaps_reference/$(date +%Y%m%d%H
