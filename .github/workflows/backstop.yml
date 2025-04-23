@@ -34,9 +34,19 @@ jobs:
     - name: Package reference screenshots
       run: tar -czf reference-screenshots.tar.gz backstop_data/bitmaps_reference
 
-    # Upload reference screenshots as artifact using v2
-    - name: Upload reference screenshots as artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: reference-screenshots
-        path: reference-screenshots.tar.gz
+    # Upload reference screenshots directly to GitHub using API
+    - name: Upload reference screenshots to GitHub
+      run: |
+        CONTENT=$(base64 reference-screenshots.tar.gz)
+        curl -X PUT \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          --data @- \
+          https://api.github.com/repos/LinkGraph2021/BSJS/contents/backstop_data/bitmaps_reference/$(date +%Y%m%d%H).tar.gz \
+          <<EOF
+          {
+            "message": "Upload reference screenshots",
+            "branch": "gh-pages",
+            "content": "$CONTENT"
+          }
+          EOF
