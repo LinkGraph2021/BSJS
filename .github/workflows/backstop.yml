@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,34 +21,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Puppeteer for Chrome rendering
+      - name: Install Puppeteer Chrome
         run: npx puppeteer browsers install chrome
 
       - name: Run BackstopJS reference
         run: npx backstop reference --config=backstop.config.js
 
-      - name: Prepare output for GitHub Pages
+      - name: Move screenshots to deploy folder
         run: |
-          mkdir -p ./public
-          cp -r backstop_data/bitmaps_reference ./public/
+          mkdir -p public
+          cp -r backstop_data/bitmaps_reference public/
 
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./public
-
-  deploy:
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
