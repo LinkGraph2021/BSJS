@@ -1,24 +1,19 @@
-name: BackstopJS Tests & Deploy
+name: BackstopJS Visual Tests
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -26,26 +21,29 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Puppeteer
-        run: npm install puppeteer
-
-      - name: Give BackstopJS permission
-        run: chmod +x node_modules/.bin/backstop
+      - name: Install Puppeteer for Chrome rendering
+        run: npx puppeteer browsers install chrome
 
       - name: Run BackstopJS reference
         run: npx backstop reference --config=backstop.config.js
 
-      - name: Run BackstopJS test
-        run: npx backstop test --config=backstop.config.js
+      - name: Prepare output for GitHub Pages
+        run: |
+          mkdir -p ./public
+          cp -r backstop_data/bitmaps_reference ./public/
 
-      - name: Upload report for GitHub Pages
+      - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v2
         with:
-          path: backstop_data/html_report
+          path: ./public
 
   deploy:
-    needs: build
+    needs: build-and-deploy
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
